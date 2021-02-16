@@ -1,5 +1,7 @@
 package com.example.InheritableThreadLocal;
 
+import java.util.concurrent.TimeUnit;
+
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -29,6 +31,12 @@ public class InheritableThreadLocalApplication implements CommandLineRunner {
     public void run(String... args) throws Exception {
         Thread thread = new Thread(
             () -> {
+                try {
+                    TimeUnit.SECONDS.sleep(5);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
                 Data data = INHERITABLE_THREAD_LOCAL.get();
                 System.out.println(
                     Thread.currentThread().getName() + "--child thread(InheritableThreadLocal), before: " + data
@@ -48,6 +56,8 @@ public class InheritableThreadLocalApplication implements CommandLineRunner {
             }
         );
         thread.start();
+        INHERITABLE_THREAD_LOCAL.remove();
+        THREAD_LOCAL.remove();
         thread.join();
     }
 
